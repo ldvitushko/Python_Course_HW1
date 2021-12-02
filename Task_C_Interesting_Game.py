@@ -6,6 +6,7 @@ def interesting_game(max_point, cards_count):
     for i in range(cards_count):
         # cards contain random numbers from 0 to 1000
         cards_list.append(randint(0, 1000))
+    print(cards_list)
     points_Vasya = 0
     points_Petya = 0
     for i in cards_list:
