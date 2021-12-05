@@ -1,21 +1,25 @@
-from random import randint
+import numpy as np
 
 
 def interesting_game(max_point, cards_count):
-    cards_list = []
-    for i in range(cards_count):
-        # cards contain random numbers from 0 to 1000
-        cards_list.append(randint(0, 1000))
+
+    cards_list = np.random.randint(0, 1000, cards_count)
+
     print(cards_list)
     points_Vasya = 0
     points_Petya = 0
+
     for i in cards_list:
-        if i % 5 == 0 and i % 3 != 0:
-            points_Vasya = points_Vasya + 1
-        elif i % 3 == 0 and i % 5 != 0:
-            points_Petya = points_Petya + 1
-        elif points_Vasya == max_point or points_Petya == max_point:
+        if points_Vasya == max_point or points_Petya == max_point:
             break
+        elif i % 5 == 0:
+            if i % 3 == 0:
+                continue
+            else:
+                points_Vasya += 1
+        elif i % 3 == 0:
+            points_Petya += 1
+
     if points_Vasya == points_Petya:
         print('Ничья!')
     elif points_Vasya > points_Petya:
