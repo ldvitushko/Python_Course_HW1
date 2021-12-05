@@ -23,11 +23,11 @@ def time_check(in_str):
     return 60 * hour + minute
 
 
-def count_alarms_in_defined_time(time_alarm, time, period):
-    if time_alarm > time:
-        return 0
-    return 1 + (time - time_alarm) // period
-
+def get_alarms_count(time, alarms):
+    sum = 0
+    for alarm in alarms:
+        sum += max(((time-alarm)//alarm_repeat) + 1, 0)
+    return sum
 
 alarm_count = sanity_check('Введите количество будильников, которые заводит Алексей:')
 alarm_repeat = sanity_check('Введите частоту повторения будильников (в минутах):')
@@ -35,21 +35,25 @@ required_alarms = sanity_check('Введите количество необхо
 alarms = []
 for i in range(alarm_count):
     alarms.append(time_check('Введите время {} будильника (в формате hh:mm):'.format(i + 1)))
-alarms.sort()
-alarms.reverse()
+
+alarms.sort(reverse=True)
 alarm_dict = {}
 for i in alarms:
     alarm_dict[i % alarm_repeat] = i
 cleared_alarms = []
-for alarm in alarms:
-    if alarm in alarm_dict.values():
-        cleared_alarms.append(alarm)
+for alarm in alarm_dict.values():
+    cleared_alarms.append(alarm)
 alarms = cleared_alarms
 
-for i in range(24 * 60):
-    k = 0
-    for j in alarms:
-        k += count_alarms_in_defined_time(j, i, alarm_repeat)
-    if k >= required_alarms:
-        print('Алексей проснется в {}:{}'.format(i // 60, i % 60))
+min_time = min(alarms)
+max_time = min_time + (required_alarms-1)*alarm_repeat
+
+while min_time <= max_time:
+    middle_time = min_time + (max_time - min_time) // 2
+    if get_alarms_count(middle_time, alarms) == required_alarms:
+        print('Алексей проснется в {}:{}'.format(middle_time // 60, middle_time % 60))
         break
+    elif get_alarms_count(middle_time, alarms) > required_alarms:
+        max_time = middle_time
+    else:
+        min_time = middle_time + 1
